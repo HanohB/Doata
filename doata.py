@@ -60,10 +60,13 @@ def get_first_pick_hero(match_id, team_id):
     ''' 
     match_req = requests.get("https://api.opendota.com/api/matches/" + str(match_id))
     match_json = json.loads(match_req.text)
+    ##Dealing with edge cases
+    ########################
     if 'error' in match_json.keys():
         return None
     if match_json['draft_timings'] == None:
         return None
+    ########################
     drafts = match_json['draft_timings']
     for phase in drafts:
         if phase["pick"] == True: ##iterating over the draft phase until the first pick.       
