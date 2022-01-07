@@ -6,6 +6,11 @@ import time
 import numpy as np
 
 def get_hero_occurrences(hero_list):
+    '''
+    Returns a dictionary of heros as keys and the number of occurences as values.
+            Parameters:
+                    hero_list (list): A list containing hero names
+    '''
     heroes_dict = {}
     # running our loop
     for c in range(len(hero_list)):
@@ -13,6 +18,11 @@ def get_hero_occurrences(hero_list):
     return(heroes_dict)
 
 def get_heroes_json_file(url):
+    '''
+    Returns a json file which is imported from the Doata git repository.
+            Parameters:
+                    url (list): The raw path of the json file.
+    '''
     dota_heroes = requests.get(url).json()
     return(dota_heroes)
 
