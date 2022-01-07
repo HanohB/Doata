@@ -4,9 +4,18 @@ import json
 import pandas as pd
 import time
 import numpy as np
-dota_heroes_file = open(r"C:\Users\97252\Desktop\Dota analysis\heroes.json", "r") ## Should be adjusted to pull directly from git
-dota_heroes = json.load(dota_heroes_file)
-dota_heroes_file.close()
+
+def get_hero_occurrences(hero_list):
+    heroes_dict = {}
+    # running our loop
+    for c in range(len(hero_list)):
+        heroes_dict[hero_list[c]] = hero_list.count(hero_list[c])
+    return(heroes_dict)
+
+def get_heroes_json_file(url):
+    dota_heroes = requests.get(url).json()
+    return(dota_heroes)
+
 
 def get_hero_by_id(json_f, id):
     '''
@@ -15,7 +24,7 @@ def get_hero_by_id(json_f, id):
                     json_f (dict): A json file containing the correlation between hero name and hero id
                     id (int): The hero's id.
     '''
-    for hero in json_f["result"]["heroes"]:
+    for hero in json_f["heroes"]:
         if hero["id"] == id:
             return hero["name"]
 
@@ -76,21 +85,25 @@ def hero_name_cleaner(heroes_list):
                     heroes_list (list): The original heroes list that needs to be cleaned.
                     num_of_matches (int): The number of matches. Note: The number of matches select is the last matches played by default.
     '''
+    filtered_list = []
     for hero in heroes_list:
-        if hero == None:
-            heroes_list.remove(hero)
-            continue
-        if hero.startswith("opp"):
-            heroes_list.remove(hero)
-    return heroes_list
+        if hero != None:
+            if not hero.startswith("opp"):
+                filtered_list.append(hero)
+    return filtered_list
 
 
 def main():
+    url = "https://raw.githubusercontent.com/HanohB/Doata/main/heroes.json"
+    global dota_heroes
+    dota_heroes = get_heroes_json_file(url)
     matches_list = get_team_matches(2586976, 10)
     first_pick_heroes = []
     for match in matches_list:
         first_pick_heroes.append(get_first_pick_hero(match, 2586976))
-    print(hero_name_cleaner(first_pick_heroes))
+    cleaned_pick_heroes = (hero_name_cleaner(first_pick_heroes))
+    print(get_hero_occurrences(cleaned_pick_heroes))
+
 if __name__ == "__main__":
     #Only call main() when this file is run directly, ignore if imported
     main()
