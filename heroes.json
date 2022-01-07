@@ -1,5 +1,4 @@
 {
-	"result": {
 		"heroes": [
 			{
 				"name": "npc_dota_hero_antimage",
@@ -449,5 +448,4 @@
 		,
 		"status": 200,
 		"count": 111
-	}
 }
