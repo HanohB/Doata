@@ -4,6 +4,8 @@ import json
 import pandas as pd
 import time
 import numpy as np
+match_req = requests.get("https://api.opendota.com/api/matches/" + str(6082074457))
+match_json = json.loads(match_req.text)
 
 def get_hero_occurrences(hero_list):
     '''
@@ -58,6 +60,10 @@ def get_first_pick_hero(match_id, team_id):
     ''' 
     match_req = requests.get("https://api.opendota.com/api/matches/" + str(match_id))
     match_json = json.loads(match_req.text)
+    if 'error' in match_json.keys():
+        return None
+    if match_json['draft_timings'] == None:
+        return None
     drafts = match_json['draft_timings']
     for phase in drafts:
         if phase["pick"] == True: ##iterating over the draft phase until the first pick.       
@@ -78,13 +84,13 @@ def get_team_matches(team_id, num_of_matches):
     ''' 
     team_req = requests.get("https://api.opendota.com/api/teams/" + str(team_id) + "/matches")
     team_matches = json.loads(team_req.text)
-    num_of_matches = 1
+    count = 1
     match_id_list = []
     #print(team_matches)
     for i in team_matches:
-        num_of_matches += 1
+        count += 1
         match_id_list.append(i["match_id"])
-        if num_of_matches == 20:
+        if count == num_of_matches:
             break
     return match_id_list
 
@@ -107,7 +113,7 @@ def main():
     url = "https://raw.githubusercontent.com/HanohB/Doata/main/heroes.json"
     global dota_heroes
     dota_heroes = get_heroes_json_file(url)
-    matches_list = get_team_matches(2586976, 10)
+    matches_list = get_team_matches(2586976, 50)
     first_pick_heroes = []
     for match in matches_list:
         first_pick_heroes.append(get_first_pick_hero(match, 2586976))
